@@ -1,266 +1,336 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>SUPREMACY 1942</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUPREMACY 1942</title>
+  <style>
+    body {
+      margin: 0;
+      background: #050505;
+      color: #f0d28a;
+      font-family: Georgia, serif;
+    }
 
-<style>
+    header {
+      background: #0b0b0b;
+      padding: 18px;
+      border-bottom: 2px solid #333;
+    }
 
-body{
-margin:0;
-background:#050505;
-color:#f0d28a;
-font-family:Georgia,serif;
-}
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: 2px;
+    }
 
-header{
-background:#0b0b0b;
-padding:20px;
-border-bottom:2px solid #333;
-}
+    .topbar {
+      margin-top: 10px;
+      display: flex;
+      gap: 20px;
+      font-size: 18px;
+    }
 
-h1{
-margin:0;
-font-size:40px;
-}
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 100px);
+    }
 
-.topbar{
-margin-top:10px;
-display:flex;
-gap:20px;
-font-size:18px;
-}
+    .map-area {
+      position: relative;
+      flex: 1;
+      background: #0b2347;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 650px;
+    }
 
-.layout{
-display:flex;
-height:100vh;
-}
+    .map-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 1;
+      background: #0b2347;
+    }
 
-.map-area{
-flex:1;
-background:#0b2347;
-display:flex;
-justify-content:center;
-align-items:center;
-}
+    .map-overlay {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      max-width: 1000px;
+      max-height: 700px;
+    }
 
-.side-panel{
-width:320px;
-background:#090909;
-border-left:2px solid #333;
-padding:20px;
-}
+    .side-panel {
+      width: 320px;
+      background: #090909;
+      border-left: 2px solid #333;
+      padding: 18px;
+      box-sizing: border-box;
+    }
 
-.panel-box{
-border:1px solid #5a4720;
-padding:15px;
-margin-bottom:15px;
-}
+    .panel-box {
+      border: 1px solid #5a4720;
+      padding: 15px;
+      margin-bottom: 16px;
+      background: rgba(0, 0, 0, 0.4);
+    }
 
-.panel-box h2{
-margin-top:0;
-}
+    .panel-box h2 {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      color: #f0d28a;
+    }
 
-#selected-country{
-font-size:22px;
-color:white;
-}
+    .country-line {
+      margin: 8px 0;
+      font-size: 18px;
+    }
 
-/* PAYS */
+    #selected-country {
+      font-size: 22px;
+      color: white;
+      font-weight: bold;
+    }
 
-.country{
-stroke:#0d0d0d;
-stroke-width:4;
-stroke-linejoin:round;
-cursor:pointer;
-transition:0.2s;
-}
+    #selected-info {
+      margin-top: 10px;
+      color: #ddd;
+      line-height: 1.5;
+      font-size: 16px;
+    }
 
-.country:hover{
-stroke:#f0d28a;
-stroke-width:5;
-}
+    /* Zones cliquables des pays */
+    .country-zone {
+      fill: rgba(255, 255, 255, 0.02);
+      stroke: rgba(0, 0, 0, 0.15);
+      stroke-width: 2;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-.country.selected{
-stroke:white;
-stroke-width:6;
-}
+    .country-zone:hover {
+      fill: rgba(240, 210, 138, 0.18);
+      stroke: #f0d28a;
+      stroke-width: 3;
+    }
 
-/* PROVINCES */
+    .country-zone.selected {
+      fill: rgba(255, 255, 255, 0.08);
+      stroke: #ffffff;
+      stroke-width: 4;
+    }
 
-.province{
-stroke:#1a1a1a;
-stroke-width:2;
-stroke-dasharray:4 4;
-}
+    /* Provinces */
+    .province {
+      stroke: rgba(0, 0, 0, 0.6);
+      stroke-width: 2;
+      stroke-dasharray: 4 4;
+      fill: none;
+      pointer-events: none;
+    }
 
-/* CAPITALES */
+    /* Capitales */
+    .city {
+      fill: #f0d28a;
+      stroke: #111;
+      stroke-width: 2;
+      pointer-events: none;
+    }
 
-.city{
-fill:#f0d28a;
-stroke:#111;
-stroke-width:2;
-}
+    .label {
+      fill: white;
+      font-size: 16px;
+      font-weight: bold;
+      text-anchor: middle;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: rgba(0, 0, 0, 0.55);
+      stroke-width: 3px;
+    }
 
-.label{
-fill:white;
-font-size:18px;
-text-anchor:middle;
-}
+    .small-label {
+      fill: #f0d28a;
+      font-size: 12px;
+      text-anchor: middle;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: rgba(0, 0, 0, 0.55);
+      stroke-width: 2px;
+    }
 
-</style>
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .side-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 2px solid #333;
+      }
+
+      .map-area {
+        min-height: 500px;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <header>
+    <h1>SUPREMACY 1942</h1>
+    <div class="topbar">
+      <div>⚙️ 90</div>
+      <div>⛽ 70</div>
+      <div>🌾 80</div>
+      <div>💰 600</div>
+    </div>
+  </header>
 
-<header>
+  <div class="layout">
+    <div class="map-area">
+      <!-- vraie carte en fond -->
+      <img src="IMG_7338.jpeg" alt="Carte de l'Europe" class="map-background" />
 
-<h1>SUPREMACY 1942</h1>
+      <!-- zones cliquables + capitales -->
+      <svg class="map-overlay" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
+        <!-- Royaume-Uni -->
+        <polygon id="uk" class="country-zone"
+          points="110,160 180,125 215,165 210,245 155,280 95,245 80,190" />
 
-<div class="topbar">
-<div>⚙️ 90</div>
-<div>⛽ 70</div>
-<div>🌾 80</div>
-<div>💰 600</div>
-</div>
+        <!-- Espagne -->
+        <polygon id="spain" class="country-zone"
+          points="60,440 175,420 250,455 235,540 115,565 45,500" />
 
-</header>
+        <!-- France -->
+        <polygon id="france" class="country-zone"
+          points="165,295 300,245 405,285 385,405 255,440 145,385" />
 
-<div class="layout">
+        <!-- Allemagne -->
+        <polygon id="germany" class="country-zone"
+          points="385,225 515,205 600,275 575,390 455,410 355,320" />
 
-<div class="map-area">
+        <!-- Italie -->
+        <polygon id="italy" class="country-zone"
+          points="420,430 530,395 590,455 575,620 510,660 455,585 425,520" />
 
-<svg width="900" height="600">
+        <!-- Pologne -->
+        <polygon id="poland" class="country-zone"
+          points="565,245 690,225 760,275 735,390 615,375 545,310" />
 
-<!-- Royaume-Uni -->
+        <!-- URSS -->
+        <polygon id="ussr" class="country-zone"
+          points="725,125 975,95 990,320 920,520 710,490 670,265" />
 
-<polygon id="uk" class="country" fill="#9b2f2f"
-points="140,140 190,110 230,140 220,220 170,260 120,230"></polygon>
+        <!-- Provinces en pointillé -->
+        <line class="province" x1="250" y1="285" x2="285" y2="390" />
+        <line class="province" x1="460" y1="225" x2="470" y2="405" />
+        <line class="province" x1="630" y1="240" x2="615" y2="382" />
 
-<!-- France -->
+        <!-- Capitales -->
+        <circle class="city" cx="150" cy="200" r="8" />
+        <circle class="city" cx="245" cy="335" r="8" />
+        <circle class="city" cx="150" cy="500" r="8" />
+        <circle class="city" cx="470" cy="305" r="8" />
+        <circle class="city" cx="515" cy="470" r="8" />
+        <circle class="city" cx="640" cy="295" r="8" />
+        <circle class="city" cx="860" cy="215" r="8" />
 
-<polygon id="france" class="country" fill="#3d57b8"
-points="200,300 300,250 380,280 360,380 260,410 180,360"></polygon>
+        <!-- Noms -->
+        <text class="label" x="150" y="188">Londres</text>
+        <text class="label" x="245" y="323">Paris</text>
+        <text class="label" x="150" y="488">Madrid</text>
+        <text class="label" x="470" y="293">Berlin</text>
+        <text class="label" x="515" y="458">Rome</text>
+        <text class="label" x="640" y="283">Varsovie</text>
+        <text class="label" x="860" y="203">Moscou</text>
 
-<!-- Espagne -->
+        <text class="small-label" x="470" y="330">Allemagne</text>
+        <text class="small-label" x="245" y="360">France</text>
+        <text class="small-label" x="640" y="320">Pologne</text>
+      </svg>
+    </div>
 
-<polygon id="spain" class="country" fill="#9c6b2f"
-points="120,420 210,400 260,440 240,520 140,540 90,480"></polygon>
+    <div class="side-panel">
+      <div class="panel-box">
+        <h2>Situation</h2>
+        <div class="country-line">🇩🇪 Allemagne</div>
+        <div class="country-line">🇬🇧 Royaume-Uni</div>
+        <div class="country-line">🇫🇷 France</div>
+        <div class="country-line">🇷🇺 URSS</div>
+        <div class="country-line">🇮🇹 Italie</div>
+        <div class="country-line">🇪🇸 Espagne</div>
+        <div class="country-line">🇵🇱 Pologne</div>
+      </div>
 
-<!-- Allemagne -->
+      <div class="panel-box">
+        <h2>Pays sélectionné</h2>
+        <div id="selected-country">Aucun</div>
+        <div id="selected-info">Clique sur un pays de la carte.</div>
+      </div>
 
-<polygon id="germany" class="country" fill="#777777"
-points="380,240 480,220 540,270 520,360 430,380 360,310"></polygon>
+      <div class="panel-box">
+        <h2>Journal</h2>
+        <div>1 Sept. 1939 — La guerre commence !</div>
+      </div>
+    </div>
+  </div>
 
-<!-- Italie -->
+  <script>
+    const countryData = {
+      uk: {
+        name: "Royaume-Uni",
+        info: "Capitale : Londres<br>Ressource : argent<br>Unités : 4 divisions"
+      },
+      france: {
+        name: "France",
+        info: "Capitale : Paris<br>Ressource : nourriture<br>Unités : 5 divisions"
+      },
+      spain: {
+        name: "Espagne",
+        info: "Capitale : Madrid<br>Ressource : nourriture<br>Unités : 2 divisions"
+      },
+      germany: {
+        name: "Allemagne",
+        info: "Capitale : Berlin<br>Ressource : industrie<br>Unités : 9 divisions"
+      },
+      italy: {
+        name: "Italie",
+        info: "Capitale : Rome<br>Ressource : argent<br>Unités : 10 divisions"
+      },
+      poland: {
+        name: "Pologne",
+        info: "Capitale : Varsovie<br>Ressource : nourriture<br>Unités : 1 division"
+      },
+      ussr: {
+        name: "URSS",
+        info: "Capitale : Moscou<br>Ressource : pétrole<br>Unités : 9 divisions"
+      }
+    };
 
-<polygon id="italy" class="country" fill="#2d7e41"
-points="420,420 500,400 550,440 540,580 480,610 440,540"></polygon>
+    const zones = document.querySelectorAll(".country-zone");
+    const selectedCountry = document.getElementById("selected-country");
+    const selectedInfo = document.getElementById("selected-info");
 
-<!-- Pologne -->
+    zones.forEach(zone => {
+      zone.addEventListener("click", () => {
+        zones.forEach(z => z.classList.remove("selected"));
+        zone.classList.add("selected");
 
-<polygon id="poland" class="country" fill="#b44a4a"
-points="540,250 650,230 700,270 680,360 580,350 530,300"></polygon>
-
-<!-- URSS -->
-
-<polygon id="ussr" class="country" fill="#7a2626"
-points="700,120 880,100 900,300 830,450 700,430 660,260"></polygon>
-
-<!-- PROVINCES -->
-
-<line class="province" x1="260" y1="270" x2="300" y2="380"></line>
-<line class="province" x1="440" y1="250" x2="450" y2="360"></line>
-<line class="province" x1="610" y1="250" x2="600" y2="350"></line>
-
-<!-- CAPITALES -->
-
-<circle class="city" cx="180" cy="180" r="7"></circle>
-<circle class="city" cx="250" cy="320" r="7"></circle>
-<circle class="city" cx="180" cy="480" r="7"></circle>
-<circle class="city" cx="450" cy="300" r="7"></circle>
-<circle class="city" cx="490" cy="460" r="7"></circle>
-<circle class="city" cx="620" cy="290" r="7"></circle>
-<circle class="city" cx="800" cy="200" r="7"></circle>
-
-<!-- NOMS -->
-
-<text class="label" x="180" y="170">Londres</text>
-<text class="label" x="250" y="310">Paris</text>
-<text class="label" x="180" y="470">Madrid</text>
-<text class="label" x="450" y="290">Berlin</text>
-<text class="label" x="490" y="450">Rome</text>
-<text class="label" x="620" y="280">Varsovie</text>
-<text class="label" x="800" y="190">Moscou</text>
-
-</svg>
-
-</div>
-
-<div class="side-panel">
-
-<div class="panel-box">
-<h2>Situation</h2>
-
-🇩🇪 Allemagne<br>
-🇬🇧 Royaume-Uni<br>
-🇫🇷 France<br>
-🇷🇺 URSS<br>
-🇮🇹 Italie<br>
-🇪🇸 Espagne<br>
-🇵🇱 Pologne
-
-</div>
-
-<div class="panel-box">
-
-<h2>Pays sélectionné</h2>
-
-<div id="selected-country">Aucun</div>
-
-</div>
-
-<div class="panel-box">
-
-<h2>Journal</h2>
-
-1 Sept. 1939 — La guerre commence !
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-const names={
-uk:"Royaume-Uni",
-france:"France",
-spain:"Espagne",
-germany:"Allemagne",
-italy:"Italie",
-poland:"Pologne",
-ussr:"URSS"
-}
-
-const countries=document.querySelectorAll(".country")
-
-countries.forEach(country=>{
-
-country.addEventListener("click",()=>{
-
-countries.forEach(c=>c.classList.remove("selected"))
-
-country.classList.add("selected")
-
-document.getElementById("selected-country").textContent=names[country.id]
-
-})
-
-})
-
-</script>
-
+        const id = zone.id;
+        selectedCountry.textContent = countryData[id].name;
+        selectedInfo.innerHTML = countryData[id].info;
+      });
+    });
+  </script>
 </body>
 </html>
