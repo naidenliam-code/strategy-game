@@ -1,0 +1,1 @@
+module.exports = { GAME_CONFIG: { MAP_WIDTH: 1000, MAP_HEIGHT: 1000, MAX_PLAYERS: 20, GAME_DURATION: 3600000, TICK_RATE: 60 }, RESOURCES: { GOLD: 'gold', WOOD: 'wood', FOOD: 'food', IRON: 'iron' }, UNITS: { INFANTRY: 'infantry', CAVALRY: 'cavalry', ARTILLERY: 'artillery', DEFENSE: 'defense' } };
