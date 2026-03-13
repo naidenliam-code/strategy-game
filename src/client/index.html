@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #gameCanvas { border: 1px solid black; }
+        #uiPanel { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Strategy Game</h1>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="uiPanel">
+        <h2>Player Info</h2>
+        <p id="playerName">Player: </p>
+        <p id="playerScore">Score: 0</p>
+        <button onclick="performAction('attack')">Attack</button>
+        <button onclick="performAction('defend')">Defend</button>
+        <button onclick="performAction('explore')">Explore</button>
+    </div>
+    <script>
+        function performAction(action) {
+            console.log('Action performed: ' + action);
+            // Implement action logic here
+        }
+    </script>
+</body>
+</html>
