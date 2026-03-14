@@ -29,6 +29,7 @@
       display: flex;
       gap: 20px;
       font-size: 18px;
+      flex-wrap: wrap;
     }
 
     .layout {
@@ -67,7 +68,7 @@
     }
 
     .side-panel {
-      width: 320px;
+      width: 340px;
       background: #090909;
       border-left: 2px solid #333;
       padding: 18px;
@@ -78,7 +79,7 @@
       border: 1px solid #5a4720;
       padding: 15px;
       margin-bottom: 16px;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.45);
     }
 
     .panel-box h2 {
@@ -92,20 +93,21 @@
       font-size: 18px;
     }
 
-    #selected-country {
+    #selected-country,
+    #selected-army {
       font-size: 22px;
       color: white;
       font-weight: bold;
     }
 
-    #selected-info {
+    #selected-info,
+    #selected-army-info {
       margin-top: 10px;
       color: #ddd;
       line-height: 1.5;
       font-size: 16px;
     }
 
-    /* Zones cliquables des pays */
     .country-zone {
       fill: rgba(255, 255, 255, 0.02);
       stroke: rgba(0, 0, 0, 0.15);
@@ -126,7 +128,6 @@
       stroke-width: 4;
     }
 
-    /* Provinces */
     .province {
       stroke: rgba(0, 0, 0, 0.6);
       stroke-width: 2;
@@ -135,7 +136,6 @@
       pointer-events: none;
     }
 
-    /* Capitales */
     .city {
       fill: #f0d28a;
       stroke: #111;
@@ -162,6 +162,33 @@
       paint-order: stroke;
       stroke: rgba(0, 0, 0, 0.55);
       stroke-width: 2px;
+    }
+
+    .army {
+      fill: #f0d28a;
+      stroke: #111;
+      stroke-width: 2;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .army:hover {
+      fill: white;
+      transform: scale(1.08);
+    }
+
+    .army.selected {
+      fill: #ffffff;
+      stroke: #f0d28a;
+      stroke-width: 3;
+    }
+
+    .army-label {
+      fill: black;
+      font-size: 13px;
+      font-weight: bold;
+      text-anchor: middle;
+      pointer-events: none;
     }
 
     @media (max-width: 900px) {
@@ -198,40 +225,32 @@
 
   <div class="layout">
     <div class="map-area">
-      <!-- vraie carte en fond -->
       <img src="IMG_7338.jpeg" alt="Carte de l'Europe" class="map-background" />
 
-      <!-- zones cliquables + capitales -->
       <svg class="map-overlay" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
-        <!-- Royaume-Uni -->
+        <!-- Zones cliquables -->
         <polygon id="uk" class="country-zone"
           points="110,160 180,125 215,165 210,245 155,280 95,245 80,190" />
 
-        <!-- Espagne -->
         <polygon id="spain" class="country-zone"
           points="60,440 175,420 250,455 235,540 115,565 45,500" />
 
-        <!-- France -->
         <polygon id="france" class="country-zone"
           points="165,295 300,245 405,285 385,405 255,440 145,385" />
 
-        <!-- Allemagne -->
         <polygon id="germany" class="country-zone"
           points="385,225 515,205 600,275 575,390 455,410 355,320" />
 
-        <!-- Italie -->
         <polygon id="italy" class="country-zone"
           points="420,430 530,395 590,455 575,620 510,660 455,585 425,520" />
 
-        <!-- Pologne -->
         <polygon id="poland" class="country-zone"
           points="565,245 690,225 760,275 735,390 615,375 545,310" />
 
-        <!-- URSS -->
         <polygon id="ussr" class="country-zone"
           points="725,125 975,95 990,320 920,520 710,490 670,265" />
 
-        <!-- Provinces en pointillé -->
+        <!-- Provinces -->
         <line class="province" x1="250" y1="285" x2="285" y2="390" />
         <line class="province" x1="460" y1="225" x2="470" y2="405" />
         <line class="province" x1="630" y1="240" x2="615" y2="382" />
@@ -257,6 +276,16 @@
         <text class="small-label" x="470" y="330">Allemagne</text>
         <text class="small-label" x="245" y="360">France</text>
         <text class="small-label" x="640" y="320">Pologne</text>
+
+        <!-- Armées -->
+        <circle id="army-germany" class="army" cx="470" cy="340" r="14" />
+        <text class="army-label" x="470" y="345">12</text>
+
+        <circle id="army-france" class="army" cx="265" cy="385" r="14" />
+        <text class="army-label" x="265" y="390">8</text>
+
+        <circle id="army-ussr" class="army" cx="835" cy="255" r="14" />
+        <text class="army-label" x="835" y="260">20</text>
       </svg>
     </div>
 
@@ -279,6 +308,12 @@
       </div>
 
       <div class="panel-box">
+        <h2>Armée sélectionnée</h2>
+        <div id="selected-army">Aucune</div>
+        <div id="selected-army-info">Clique sur une armée.</div>
+      </div>
+
+      <div class="panel-box">
         <h2>Journal</h2>
         <div>1 Sept. 1939 — La guerre commence !</div>
       </div>
@@ -289,37 +324,57 @@
     const countryData = {
       uk: {
         name: "Royaume-Uni",
-        info: "Capitale : Londres<br>Ressource : argent<br>Unités : 4 divisions"
+        info: "Capitale : Londres<br>Ressource : argent<br>Armées : 4 divisions"
       },
       france: {
         name: "France",
-        info: "Capitale : Paris<br>Ressource : nourriture<br>Unités : 5 divisions"
+        info: "Capitale : Paris<br>Région principale : Île-de-France<br>Ressource : nourriture<br>Armées : 8 divisions"
       },
       spain: {
         name: "Espagne",
-        info: "Capitale : Madrid<br>Ressource : nourriture<br>Unités : 2 divisions"
+        info: "Capitale : Madrid<br>Région principale : Castille<br>Ressource : nourriture<br>Armées : 2 divisions"
       },
       germany: {
         name: "Allemagne",
-        info: "Capitale : Berlin<br>Ressource : industrie<br>Unités : 9 divisions"
+        info: "Capitale : Berlin<br>Région principale : Prusse<br>Ressource : industrie<br>Armées : 12 divisions"
       },
       italy: {
         name: "Italie",
-        info: "Capitale : Rome<br>Ressource : argent<br>Unités : 10 divisions"
+        info: "Capitale : Rome<br>Région principale : Latium<br>Ressource : argent<br>Armées : 10 divisions"
       },
       poland: {
         name: "Pologne",
-        info: "Capitale : Varsovie<br>Ressource : nourriture<br>Unités : 1 division"
+        info: "Capitale : Varsovie<br>Région principale : Mazovie<br>Ressource : nourriture<br>Armées : 1 division"
       },
       ussr: {
         name: "URSS",
-        info: "Capitale : Moscou<br>Ressource : pétrole<br>Unités : 9 divisions"
+        info: "Capitale : Moscou<br>Région principale : Russie centrale<br>Ressource : pétrole<br>Armées : 20 divisions"
+      }
+    };
+
+    const armyData = {
+      "army-germany": {
+        name: "Armée allemande",
+        info: "Position : Berlin (Prusse)<br>Type : Infanterie<br>Force : 12 divisions<br>Attaque : 10<br>Défense : 8"
+      },
+      "army-france": {
+        name: "Armée française",
+        info: "Position : Paris (Île-de-France)<br>Type : Infanterie<br>Force : 8 divisions<br>Attaque : 8<br>Défense : 9"
+      },
+      "army-ussr": {
+        name: "Armée soviétique",
+        info: "Position : Moscou (Russie centrale)<br>Type : Infanterie<br>Force : 20 divisions<br>Attaque : 11<br>Défense : 10"
       }
     };
 
     const zones = document.querySelectorAll(".country-zone");
+    const armies = document.querySelectorAll(".army");
+
     const selectedCountry = document.getElementById("selected-country");
     const selectedInfo = document.getElementById("selected-info");
+
+    const selectedArmy = document.getElementById("selected-army");
+    const selectedArmyInfo = document.getElementById("selected-army-info");
 
     zones.forEach(zone => {
       zone.addEventListener("click", () => {
@@ -329,6 +384,19 @@
         const id = zone.id;
         selectedCountry.textContent = countryData[id].name;
         selectedInfo.innerHTML = countryData[id].info;
+      });
+    });
+
+    armies.forEach(army => {
+      army.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        armies.forEach(a => a.classList.remove("selected"));
+        army.classList.add("selected");
+
+        const id = army.id;
+        selectedArmy.textContent = armyData[id].name;
+        selectedArmyInfo.innerHTML = armyData[id].info;
       });
     });
   </script>
