@@ -228,64 +228,145 @@
       <img src="IMG_7338.jpeg" alt="Carte de l'Europe" class="map-background" />
 
       <svg class="map-overlay" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
-        <!-- Zones cliquables -->
-        <polygon id="uk" class="country-zone"
-          points="110,160 180,125 215,165 210,245 155,280 95,245 80,190" />
+        <!-- ROYAUME-UNI -->
+        <polygon
+          id="uk"
+          class="country-zone"
+          points="
+            88,170
+            148,142
+            175,170
+            173,228
+            138,258
+            93,228
+            82,190
+          "
+        />
 
-        <polygon id="spain" class="country-zone"
-          points="60,440 175,420 250,455 235,540 115,565 45,500" />
+        <!-- ESPAGNE -->
+        <polygon
+          id="spain"
+          class="country-zone"
+          points="
+            55,450
+            140,430
+            210,452
+            196,523
+            110,542
+            48,492
+          "
+        />
 
-        <polygon id="france" class="country-zone"
-          points="165,295 300,245 405,285 385,405 255,440 145,385" />
+        <!-- FRANCE (mieux alignée) -->
+        <polygon
+          id="france"
+          class="country-zone"
+          points="
+            170,310
+            220,275
+            300,260
+            360,295
+            350,350
+            300,390
+            230,400
+            180,360
+          "
+        />
 
-        <polygon id="germany" class="country-zone"
-          points="385,225 515,205 600,275 575,390 455,410 355,320" />
+        <!-- ALLEMAGNE (mieux alignée) -->
+        <polygon
+          id="germany"
+          class="country-zone"
+          points="
+            360,250
+            430,230
+            520,260
+            520,340
+            460,380
+            380,360
+            340,300
+          "
+        />
 
-        <polygon id="italy" class="country-zone"
-          points="420,430 530,395 590,455 575,620 510,660 455,585 425,520" />
+        <!-- ITALIE -->
+        <polygon
+          id="italy"
+          class="country-zone"
+          points="
+            430,430
+            505,405
+            545,450
+            535,595
+            490,625
+            450,555
+            430,505
+          "
+        />
 
-        <polygon id="poland" class="country-zone"
-          points="565,245 690,225 760,275 735,390 615,375 545,310" />
+        <!-- POLOGNE -->
+        <polygon
+          id="poland"
+          class="country-zone"
+          points="
+            545,265
+            640,250
+            690,285
+            675,360
+            590,360
+            530,315
+          "
+        />
 
-        <polygon id="ussr" class="country-zone"
-          points="725,125 975,95 990,320 920,520 710,490 670,265" />
+        <!-- URSS -->
+        <polygon
+          id="ussr"
+          class="country-zone"
+          points="
+            705,140
+            965,110
+            980,325
+            920,500
+            720,470
+            670,270
+          "
+        />
 
-        <!-- Provinces -->
+        <!-- FRONTIÈRES DE PROVINCES -->
         <line class="province" x1="250" y1="285" x2="285" y2="390" />
-        <line class="province" x1="460" y1="225" x2="470" y2="405" />
-        <line class="province" x1="630" y1="240" x2="615" y2="382" />
+        <line class="province" x1="430" y1="240" x2="450" y2="365" />
+        <line class="province" x1="610" y1="265" x2="600" y2="360" />
 
-        <!-- Capitales -->
-        <circle class="city" cx="150" cy="200" r="8" />
-        <circle class="city" cx="245" cy="335" r="8" />
-        <circle class="city" cx="150" cy="500" r="8" />
-        <circle class="city" cx="470" cy="305" r="8" />
-        <circle class="city" cx="515" cy="470" r="8" />
-        <circle class="city" cx="640" cy="295" r="8" />
-        <circle class="city" cx="860" cy="215" r="8" />
+        <!-- CAPITALES -->
+        <circle class="city" cx="135" cy="195" r="8" />
+        <circle class="city" cx="235" cy="335" r="8" />
+        <circle class="city" cx="138" cy="493" r="8" />
+        <circle class="city" cx="435" cy="315" r="8" />
+        <circle class="city" cx="490" cy="470" r="8" />
+        <circle class="city" cx="610" cy="305" r="8" />
+        <circle class="city" cx="850" cy="215" r="8" />
 
-        <!-- Noms -->
-        <text class="label" x="150" y="188">Londres</text>
-        <text class="label" x="245" y="323">Paris</text>
-        <text class="label" x="150" y="488">Madrid</text>
-        <text class="label" x="470" y="293">Berlin</text>
-        <text class="label" x="515" y="458">Rome</text>
-        <text class="label" x="640" y="283">Varsovie</text>
-        <text class="label" x="860" y="203">Moscou</text>
+        <!-- NOMS -->
+        <text class="label" x="135" y="183">Londres</text>
+        <text class="label" x="235" y="323">Paris</text>
+        <text class="label" x="138" y="481">Madrid</text>
+        <text class="label" x="435" y="303">Berlin</text>
+        <text class="label" x="490" y="458">Rome</text>
+        <text class="label" x="610" y="293">Varsovie</text>
+        <text class="label" x="850" y="203">Moscou</text>
 
-        <text class="small-label" x="470" y="330">Allemagne</text>
-        <text class="small-label" x="245" y="360">France</text>
-        <text class="small-label" x="640" y="320">Pologne</text>
+        <text class="small-label" x="435" y="340">Allemagne</text>
+        <text class="small-label" x="235" y="360">France</text>
+        <text class="small-label" x="610" y="330">Pologne</text>
 
-        <!-- Armées -->
-        <circle id="army-germany" class="army" cx="470" cy="340" r="14" />
-        <text class="army-label" x="470" y="345">12</text>
+        <!-- ARMÉES -->
+        <circle id="army-germany" class="army" cx="445" cy="355" r="14" />
+        <text class="army-label" x="445" y="360">12</text>
 
-        <circle id="army-france" class="army" cx="265" cy="385" r="14" />
-        <text class="army-label" x="265" y="390">8</text>
+        <circle id="army-france" class="army" cx="255" cy="385" r="14" />
+        <text class="army-label" x="255" y="390">8</text>
 
-        <circle id="army-ussr" class="army" cx="835" cy="255" r="14" />
-        <text class="army-label" x="835" y="260">20</text>
+        <circle id="army-ussr" class="army" cx="820" cy="255" r="14" />
+        <text class="army-label" x="820" y="260">20</text>
       </svg>
     </div>
 
@@ -324,31 +405,31 @@
     const countryData = {
       uk: {
         name: "Royaume-Uni",
-        info: "Capitale : Londres<br>Ressource : argent<br>Armées : 4 divisions"
+        info: "Capitale : Londres<br>Région : Angleterre<br>Ressource : argent<br>Armées : 4 divisions"
       },
       france: {
         name: "France",
-        info: "Capitale : Paris<br>Région principale : Île-de-France<br>Ressource : nourriture<br>Armées : 8 divisions"
+        info: "Capitale : Paris<br>Région : Île-de-France<br>Ressource : nourriture<br>Armées : 8 divisions"
       },
       spain: {
         name: "Espagne",
-        info: "Capitale : Madrid<br>Région principale : Castille<br>Ressource : nourriture<br>Armées : 2 divisions"
+        info: "Capitale : Madrid<br>Région : Castille<br>Ressource : nourriture<br>Armées : 2 divisions"
       },
       germany: {
         name: "Allemagne",
-        info: "Capitale : Berlin<br>Région principale : Prusse<br>Ressource : industrie<br>Armées : 12 divisions"
+        info: "Capitale : Berlin<br>Région : Prusse<br>Ressource : industrie<br>Armées : 12 divisions"
       },
       italy: {
         name: "Italie",
-        info: "Capitale : Rome<br>Région principale : Latium<br>Ressource : argent<br>Armées : 10 divisions"
+        info: "Capitale : Rome<br>Région : Latium<br>Ressource : argent<br>Armées : 10 divisions"
       },
       poland: {
         name: "Pologne",
-        info: "Capitale : Varsovie<br>Région principale : Mazovie<br>Ressource : nourriture<br>Armées : 1 division"
+        info: "Capitale : Varsovie<br>Région : Mazovie<br>Ressource : nourriture<br>Armées : 1 division"
       },
       ussr: {
         name: "URSS",
-        info: "Capitale : Moscou<br>Région principale : Russie centrale<br>Ressource : pétrole<br>Armées : 20 divisions"
+        info: "Capitale : Moscou<br>Région : Russie centrale<br>Ressource : pétrole<br>Armées : 20 divisions"
       }
     };
 
