@@ -148,7 +148,8 @@
       font-size: 16px;
       font-weight: bold;
       text-anchor: middle;
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: pointer;
       paint-order: stroke;
       stroke: rgba(0, 0, 0, 0.55);
       stroke-width: 3px;
@@ -189,6 +190,30 @@
       font-weight: bold;
       text-anchor: middle;
       pointer-events: none;
+    }
+
+    .action-button {
+      margin-top: 14px;
+      width: 100%;
+      padding: 10px;
+      background: #f0d28a;
+      color: #111;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    .action-button:hover {
+      background: #fff;
+    }
+
+    .action-button:disabled {
+      background: #7a6a45;
+      color: #222;
+      cursor: not-allowed;
     }
 
     @media (max-width: 900px) {
@@ -257,7 +282,7 @@
           "
         />
 
-        <!-- FRANCE (mieux alignée) -->
+        <!-- FRANCE -->
         <polygon
           id="france"
           class="country-zone"
@@ -273,7 +298,7 @@
           "
         />
 
-        <!-- ALLEMAGNE (mieux alignée) -->
+        <!-- ALLEMAGNE -->
         <polygon
           id="germany"
           class="country-zone"
@@ -345,14 +370,14 @@
         <circle class="city" cx="610" cy="305" r="8" />
         <circle class="city" cx="850" cy="215" r="8" />
 
-        <!-- NOMS -->
-        <text class="label" x="135" y="183">Londres</text>
-        <text class="label" x="235" y="323">Paris</text>
-        <text class="label" x="138" y="481">Madrid</text>
-        <text class="label" x="435" y="303">Berlin</text>
-        <text class="label" x="490" y="458">Rome</text>
-        <text class="label" x="610" y="293">Varsovie</text>
-        <text class="label" x="850" y="203">Moscou</text>
+        <!-- NOMS CLIQUABLES -->
+        <text class="label" x="135" y="183" data-country="uk">Londres</text>
+        <text class="label" x="235" y="323" data-country="france">Paris</text>
+        <text class="label" x="138" y="481" data-country="spain">Madrid</text>
+        <text class="label" x="435" y="303" data-country="germany">Berlin</text>
+        <text class="label" x="490" y="458" data-country="italy">Rome</text>
+        <text class="label" x="610" y="293" data-country="poland">Varsovie</text>
+        <text class="label" x="850" y="203" data-country="ussr">Moscou</text>
 
         <text class="small-label" x="435" y="340">Allemagne</text>
         <text class="small-label" x="235" y="360">France</text>
@@ -360,13 +385,13 @@
 
         <!-- ARMÉES -->
         <circle id="army-germany" class="army" cx="445" cy="355" r="14" />
-        <text class="army-label" x="445" y="360">12</text>
+        <text id="army-label-germany" class="army-label" x="445" y="360">12</text>
 
         <circle id="army-france" class="army" cx="255" cy="385" r="14" />
-        <text class="army-label" x="255" y="390">8</text>
+        <text id="army-label-france" class="army-label" x="255" y="390">8</text>
 
         <circle id="army-ussr" class="army" cx="820" cy="255" r="14" />
-        <text class="army-label" x="820" y="260">20</text>
+        <text id="army-label-ussr" class="army-label" x="820" y="260">20</text>
       </svg>
     </div>
 
@@ -386,6 +411,7 @@
         <h2>Pays sélectionné</h2>
         <div id="selected-country">Aucun</div>
         <div id="selected-info">Clique sur un pays de la carte.</div>
+        <button id="recruit-button" class="action-button" disabled>Recruter +1 division</button>
       </div>
 
       <div class="panel-box">
@@ -396,7 +422,7 @@
 
       <div class="panel-box">
         <h2>Journal</h2>
-        <div>1 Sept. 1939 — La guerre commence !</div>
+        <div id="journal-log">1 Sept. 1939 — La guerre commence !</div>
       </div>
     </div>
   </div>
@@ -405,80 +431,231 @@
     const countryData = {
       uk: {
         name: "Royaume-Uni",
-        info: "Capitale : Londres<br>Région : Angleterre<br>Ressource : argent<br>Armées : 4 divisions"
+        capital: "Londres",
+        region: "Angleterre",
+        resource: "argent",
+        armies: 4,
+        money: 120,
+        armyId: null
       },
       france: {
         name: "France",
-        info: "Capitale : Paris<br>Région : Île-de-France<br>Ressource : nourriture<br>Armées : 8 divisions"
+        capital: "Paris",
+        region: "Île-de-France",
+        resource: "nourriture",
+        armies: 8,
+        money: 140,
+        armyId: "army-france"
       },
       spain: {
         name: "Espagne",
-        info: "Capitale : Madrid<br>Région : Castille<br>Ressource : nourriture<br>Armées : 2 divisions"
+        capital: "Madrid",
+        region: "Castille",
+        resource: "nourriture",
+        armies: 2,
+        money: 90,
+        armyId: null
       },
       germany: {
         name: "Allemagne",
-        info: "Capitale : Berlin<br>Région : Prusse<br>Ressource : industrie<br>Armées : 12 divisions"
+        capital: "Berlin",
+        region: "Prusse",
+        resource: "industrie",
+        armies: 12,
+        money: 160,
+        armyId: "army-germany"
       },
       italy: {
         name: "Italie",
-        info: "Capitale : Rome<br>Région : Latium<br>Ressource : argent<br>Armées : 10 divisions"
+        capital: "Rome",
+        region: "Latium",
+        resource: "argent",
+        armies: 10,
+        money: 110,
+        armyId: null
       },
       poland: {
         name: "Pologne",
-        info: "Capitale : Varsovie<br>Région : Mazovie<br>Ressource : nourriture<br>Armées : 1 division"
+        capital: "Varsovie",
+        region: "Mazovie",
+        resource: "nourriture",
+        armies: 1,
+        money: 70,
+        armyId: null
       },
       ussr: {
         name: "URSS",
-        info: "Capitale : Moscou<br>Région : Russie centrale<br>Ressource : pétrole<br>Armées : 20 divisions"
+        capital: "Moscou",
+        region: "Russie centrale",
+        resource: "pétrole",
+        armies: 20,
+        money: 220,
+        armyId: "army-ussr"
       }
     };
 
     const armyData = {
       "army-germany": {
         name: "Armée allemande",
-        info: "Position : Berlin (Prusse)<br>Type : Infanterie<br>Force : 12 divisions<br>Attaque : 10<br>Défense : 8"
+        countryId: "germany",
+        position: "Berlin (Prusse)",
+        type: "Infanterie",
+        force: 12,
+        attack: 10,
+        defense: 8
       },
       "army-france": {
         name: "Armée française",
-        info: "Position : Paris (Île-de-France)<br>Type : Infanterie<br>Force : 8 divisions<br>Attaque : 8<br>Défense : 9"
+        countryId: "france",
+        position: "Paris (Île-de-France)",
+        type: "Infanterie",
+        force: 8,
+        attack: 8,
+        defense: 9
       },
       "army-ussr": {
         name: "Armée soviétique",
-        info: "Position : Moscou (Russie centrale)<br>Type : Infanterie<br>Force : 20 divisions<br>Attaque : 11<br>Défense : 10"
+        countryId: "ussr",
+        position: "Moscou (Russie centrale)",
+        type: "Infanterie",
+        force: 20,
+        attack: 11,
+        defense: 10
       }
     };
 
     const zones = document.querySelectorAll(".country-zone");
     const armies = document.querySelectorAll(".army");
+    const labels = document.querySelectorAll(".label[data-country]");
+    const mapOverlay = document.querySelector(".map-overlay");
 
     const selectedCountry = document.getElementById("selected-country");
     const selectedInfo = document.getElementById("selected-info");
-
     const selectedArmy = document.getElementById("selected-army");
     const selectedArmyInfo = document.getElementById("selected-army-info");
+    const recruitButton = document.getElementById("recruit-button");
+    const journalLog = document.getElementById("journal-log");
+
+    let currentCountryId = null;
+    let currentArmyId = null;
+
+    function renderCountryInfo(id) {
+      const country = countryData[id];
+      selectedCountry.textContent = country.name;
+      selectedInfo.innerHTML = `
+        Capitale : ${country.capital}<br>
+        Région : ${country.region}<br>
+        Ressource : ${country.resource}<br>
+        Armées : ${country.armies} divisions<br>
+        Trésor : ${country.money}
+      `;
+      currentCountryId = id;
+      recruitButton.disabled = false;
+    }
+
+    function renderArmyInfo(id) {
+      const army = armyData[id];
+      selectedArmy.textContent = army.name;
+      selectedArmyInfo.innerHTML = `
+        Position : ${army.position}<br>
+        Type : ${army.type}<br>
+        Force : ${army.force} divisions<br>
+        Attaque : ${army.attack}<br>
+        Défense : ${army.defense}
+      `;
+      currentArmyId = id;
+    }
+
+    function clearSelection() {
+      zones.forEach(z => z.classList.remove("selected"));
+      armies.forEach(a => a.classList.remove("selected"));
+
+      selectedCountry.textContent = "Aucun";
+      selectedInfo.innerHTML = "Clique sur un pays de la carte.";
+
+      selectedArmy.textContent = "Aucune";
+      selectedArmyInfo.innerHTML = "Clique sur une armée.";
+
+      recruitButton.disabled = true;
+
+      currentCountryId = null;
+      currentArmyId = null;
+    }
+
+    function selectCountry(id) {
+      zones.forEach(z => z.classList.remove("selected"));
+      const zone = document.getElementById(id);
+      if (zone) zone.classList.add("selected");
+
+      renderCountryInfo(id);
+    }
+
+    function selectArmy(id) {
+      armies.forEach(a => a.classList.remove("selected"));
+      const army = document.getElementById(id);
+      if (army) army.classList.add("selected");
+
+      renderArmyInfo(id);
+
+      const linkedCountryId = armyData[id].countryId;
+      selectCountry(linkedCountryId);
+    }
+
+    function updateArmyVisual(countryId) {
+      const country = countryData[countryId];
+      if (!country.armyId) return;
+
+      const army = armyData[country.armyId];
+      army.force = country.armies;
+
+      const shortId = country.armyId.replace("army-", "");
+      const label = document.getElementById(`army-label-${shortId}`);
+      if (label) {
+        label.textContent = country.armies;
+      }
+
+      if (currentArmyId === country.armyId) {
+        renderArmyInfo(country.armyId);
+      }
+    }
 
     zones.forEach(zone => {
-      zone.addEventListener("click", () => {
-        zones.forEach(z => z.classList.remove("selected"));
-        zone.classList.add("selected");
-
-        const id = zone.id;
-        selectedCountry.textContent = countryData[id].name;
-        selectedInfo.innerHTML = countryData[id].info;
+      zone.addEventListener("click", (event) => {
+        event.stopPropagation();
+        selectCountry(zone.id);
       });
     });
 
     armies.forEach(army => {
       army.addEventListener("click", (event) => {
         event.stopPropagation();
-
-        armies.forEach(a => a.classList.remove("selected"));
-        army.classList.add("selected");
-
-        const id = army.id;
-        selectedArmy.textContent = armyData[id].name;
-        selectedArmyInfo.innerHTML = armyData[id].info;
+        selectArmy(army.id);
       });
+    });
+
+    labels.forEach(label => {
+      label.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const id = label.dataset.country;
+        selectCountry(id);
+      });
+    });
+
+    mapOverlay.addEventListener("click", () => {
+      clearSelection();
+    });
+
+    recruitButton.addEventListener("click", () => {
+      if (!currentCountryId) return;
+
+      const country = countryData[currentCountryId];
+      country.armies += 1;
+      country.money = Math.max(0, country.money - 10);
+
+      renderCountryInfo(currentCountryId);
+      updateArmyVisual(currentCountryId);
+
+      journalLog.innerHTML = `1 Sept. 1939 — ${country.name} recrute +1 division à ${country.capital}.`;
     });
   </script>
 </body>
